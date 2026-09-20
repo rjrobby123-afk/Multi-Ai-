@@ -19,7 +19,7 @@ st.set_page_config(
 
 
 # =========================================================
-# CSS
+# CSS STYLING
 # =========================================================
 
 st.markdown("""
@@ -43,7 +43,7 @@ st.markdown("""
 
 
 # =========================================================
-# TITLE
+# APP TITLE
 # =========================================================
 
 st.markdown(
@@ -58,7 +58,7 @@ st.markdown(
 
 
 # =========================================================
-# API CLIENTS
+# API CLIENTS INITIALIZATION
 # =========================================================
 
 @st.cache_resource
@@ -73,7 +73,6 @@ def initialize_clients():
     # -------------------------
     # Gemini
     # -------------------------
-
     try:
         clients["Gemini"] = genai.Client(
             api_key=st.secrets["GEMINI_API_KEY"]
@@ -82,9 +81,8 @@ def initialize_clients():
         pass
 
     # -------------------------
-    # OpenAI
+    # OpenAI / ChatGPT
     # -------------------------
-
     try:
         clients["ChatGPT"] = OpenAI(
             api_key=st.secrets["OPENAI_API_KEY"]
@@ -95,7 +93,6 @@ def initialize_clients():
     # -------------------------
     # xAI / Grok
     # -------------------------
-
     try:
         clients["Grok"] = OpenAI(
             api_key=st.secrets["XAI_API_KEY"],
@@ -111,7 +108,7 @@ clients = initialize_clients()
 
 
 # =========================================================
-# SESSION STATE
+# SESSION STATE MANAGEMENT
 # =========================================================
 
 if "history" not in st.session_state:
@@ -122,7 +119,7 @@ if "answers" not in st.session_state:
 
 
 # =========================================================
-# LANGUAGES
+# SUPPORTED LANGUAGES
 # =========================================================
 
 languages = [
@@ -146,7 +143,7 @@ languages = [
 
 
 # =========================================================
-# SIDEBAR
+# SIDEBAR SETTINGS
 # =========================================================
 
 with st.sidebar:
@@ -191,23 +188,30 @@ with st.sidebar:
 
 
 # =========================================================
-# QUESTION
+# QUESTION INPUT FORM (Auto-Clear on Submit)
 # =========================================================
 
-question = st.text_area(
-    "💬 আপনার প্রশ্ন লিখুন",
-    placeholder=(
-        "যেমন:\n"
-        "এই ছবিটা আমাকে বুঝিয়ে দাও।\n\n"
-        "অথবা:\n"
-        "এই PDF-এর মূল বিষয়গুলো ব্যাখ্যা কর।"
-    ),
-    height=160
-)
+with st.form(key="ai_question_form", clear_on_submit=True):
+    question = st.text_area(
+        "💬 আপনার প্রশ্ন লিখুন",
+        placeholder=(
+            "যেমন:\n"
+            "এই ছবিটা আমাকে বুঝিয়ে দাও।\n\n"
+            "অথবা:\n"
+            "এই PDF-এর মূল বিষয়গুলো ব্যাখ্যা কর।"
+        ),
+        height=160
+    )
+    
+    ask_button = st.form_submit_button(
+        "🚀 AI-গুলোকে প্রশ্ন করুন",
+        use_container_width=True,
+        type="primary"
+    )
 
 
 # =========================================================
-# FILE UPLOAD
+# FILE UPLOAD SECTION
 # =========================================================
 
 uploaded_file = st.file_uploader(
@@ -226,7 +230,7 @@ uploaded_file = st.file_uploader(
 
 
 # =========================================================
-# SHOW UPLOADED FILE
+# SHOW UPLOADED FILE PREVIEW
 # =========================================================
 
 if uploaded_file:
@@ -253,7 +257,7 @@ if uploaded_file:
 
 
 # =========================================================
-# LANGUAGE INSTRUCTION
+# LANGUAGE INSTRUCTION FUNCTION
 # =========================================================
 
 def language_instruction(language):
@@ -262,9 +266,7 @@ def language_instruction(language):
 
         return """
 Answer in the same language as the user's question.
-
-If multiple languages are used,
-use the dominant language.
+If multiple languages are used, use the dominant language.
 """
 
     return f"""
@@ -301,8 +303,7 @@ def analyze_file_with_gemini(uploaded_file, question, language):
         )
 
         prompt = f"""
-You are the document/image understanding component
-of a Multi-AI application.
+You are the document/image understanding component of a Multi-AI application created by Md. Rabby Hossain from Bangladesh, who is currently studying in the Department of Political Science at the University of Barisal.
 
 {language_instruction(language)}
 
@@ -313,12 +314,10 @@ The user asks:
 {question if question.strip() else "Explain this file clearly."}
 
 Important:
-
 - Read the relevant information from the file.
 - Understand images, tables, charts and diagrams when present.
 - Do not invent information that is not visible in the file.
-- Give a factual description of the information relevant
-  to the user's question.
+- Give a factual description of the information relevant to the user's question.
 - This analysis will be passed to other AI systems.
 """
 
@@ -338,7 +337,7 @@ Important:
 
 
 # =========================================================
-# NORMAL PROMPT
+# NORMAL PROMPT BUILDER (Developer Context Included)
 # =========================================================
 
 def build_prompt(
@@ -365,17 +364,15 @@ END FILE INFORMATION
 """
 
     return f"""
-You are an advanced AI assistant.
+You are an advanced AI assistant. You were created and developed by Md. Rabby Hossain, who originates from Bangladesh and is currently a student in the Department of Political Science at the University of Barisal. If anyone asks you who created you, who is your developer, or who made you, you must clearly and proudly state that you were created by Md. Rabby Hossain.
 
 {language_instruction(language)}
 
-Answer the user's question accurately,
-clearly and directly.
+Answer the user's question accurately, clearly and directly.
 
 Do not invent facts.
 
-If information comes from the uploaded file,
-base the answer on that information.
+If information comes from the uploaded file, base the answer on that information.
 
 User question:
 
@@ -386,7 +383,7 @@ User question:
 
 
 # =========================================================
-# GEMINI ANSWER
+# GEMINI RESPONSE FUNCTION
 # =========================================================
 
 def ask_gemini(
@@ -421,7 +418,7 @@ def ask_gemini(
 
 
 # =========================================================
-# CHATGPT
+# CHATGPT RESPONSE FUNCTION
 # =========================================================
 
 def ask_chatgpt(
@@ -456,7 +453,7 @@ def ask_chatgpt(
 
 
 # =========================================================
-# GROK
+# GROK RESPONSE FUNCTION
 # =========================================================
 
 def ask_grok(
@@ -491,18 +488,7 @@ def ask_grok(
 
 
 # =========================================================
-# ASK BUTTON
-# =========================================================
-
-ask_button = st.button(
-    "🚀 AI-গুলোকে প্রশ্ন করুন",
-    use_container_width=True,
-    type="primary"
-)
-
-
-# =========================================================
-# MAIN PROCESS
+# MAIN EXECUTION PROCESS
 # =========================================================
 
 if ask_button:
@@ -536,7 +522,7 @@ if ask_button:
 
 
     # =====================================================
-    # FILE ANALYSIS
+    # FILE ANALYSIS EXECUTION
     # =====================================================
 
     file_context = None
@@ -555,7 +541,7 @@ if ask_button:
 
 
     # =====================================================
-    # ASK ALL AI
+    # PARALLEL AI QUERY EXECUTION
     # =====================================================
 
     results = {}
@@ -563,7 +549,7 @@ if ask_button:
     start_time = time.time()
 
     with st.spinner(
-        "🤖 AI-গুলো উত্তর তৈরি করছে..."
+        "🤖 AI-গুলো উত্তরগুলো তৈরি করছে..."
     ):
 
         with concurrent.futures.ThreadPoolExecutor(
@@ -622,7 +608,7 @@ if ask_button:
 
 
 # =========================================================
-# DISPLAY ANSWERS
+# DISPLAY ANSWERS IN CARD / BOX LAYOUT
 # =========================================================
 
 if st.session_state.answers:
@@ -648,26 +634,29 @@ if st.session_state.answers:
     ):
 
         with columns[index]:
+            # প্রতিটি এআই-এর উত্তর সুন্দর বক্স বা কার্ডের ভেতর দেখানোর জন্য
+            with st.container(border=True):
 
-            st.subheader(
-                f"{icons.get(name, '🤖')} {name}"
-            )
+                st.subheader(
+                    f"{icons.get(name, '🤖')} {name}"
+                )
 
-            st.markdown("---")
+                st.markdown("---")
 
-            st.markdown(answer)
+                st.markdown(answer)
 
-            st.download_button(
-                "⬇️ Download",
-                answer,
-                file_name=f"{name}_answer.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
+                st.download_button(
+                    "⬇️ Download",
+                    answer,
+                    file_name=f"{name}_answer.txt",
+                    mime="text/plain",
+                    use_container_width=True,
+                    key=f"download_{name}_{index}"
+                )
 
 
 # =========================================================
-# HISTORY
+# PREVIOUS QUESTIONS HISTORY
 # =========================================================
 
 if st.session_state.history:
