@@ -1,8 +1,7 @@
 import streamlit as st
-from gemini import GeminiAI
+import google.generativeai as genai
 import time
 import uuid
-
 
 # =========================================================
 # PAGE CONFIG
@@ -13,7 +12,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
 
 # =========================================================
 # CSS STYLING
