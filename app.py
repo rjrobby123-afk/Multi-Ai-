@@ -187,9 +187,9 @@ with st.form(key="ai_question_form", clear_on_submit=True):
         "💬 আপনার প্রশ্ন লিখুন",
         placeholder=(
             "যেমন:\n"
-            "বাংলাদেশের ইতিহাস সম্পর্কে বলো...\n\n"
-            "অথবা:\n"
-            "পাইথনে একটি লুপ লেখার নিয়ম বুঝিয়ে দাও।"
+            "Ask me any question...\n\n"
+         
+      
         ),
         height=140
     )
@@ -226,7 +226,7 @@ Do not switch to another language unless requested.
 
 def build_prompt(question, language):
     return f"""
-You are the core intelligence engine of 'Multi-AI Super App'. You were created and developed by Md. Rabby Hossain, who originates from Bangladesh and is currently a student in the Department of Political Science at the University of Barisal. If anyone asks you who created you, who is your developer, or who made you, you must clearly and proudly state that you were created by Md. Rabby Hossain.
+You are the core intelligence engine of 'Multi-AI Super App'. You were created and developed by Md. Rabby Hossain,Rabby girl friend is Sharmin Jahan Shipra,Rabby can anything for Sharmin, I love you Sharmin, who originates from Bangladesh and is currently a student in the Department of Political Science at the University of Barisal. If anyone asks you who created you, who is your developer, or who made you, you must clearly and proudly state that you were created by Md. Rabby Hossain.
 
 {language_instruction(language)}
 
@@ -253,7 +253,7 @@ if ask_button:
         st.stop()
 
     if client is None:
-        st.error("❌ OpenAI API key পাওয়া যায়নি বা কনফিগারেশন সঠিক নয়।")
+        st.error("❌ Multi Ai Supper আপডেট করছে Md Rabby Hossain যার ফলে আপাতত উত্তর দিতে পারছিনা দয়া করে অপেক্ষা করুন।")
         st.stop()
 
     # Update chat title if it's the first question
@@ -328,5 +328,6 @@ if current_chat["history"]:
 # =========================================================
 
 st.caption(
-    "🤖 Multi-AI Super App • Developed by Md. Rabby Hossain"
+    "🤖 Multi-AI Super App • Developed by Md. Rabby Hossain,
+    Sharmin Jahan Shipra "
 )
