@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+from gemini import GeminiAI
 import time
 import uuid
 
