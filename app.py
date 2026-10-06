@@ -328,5 +328,4 @@ if current_chat["history"]:
 # =========================================================
 
 st.caption(
-    "🤖 Multi-AI Super App • Developed by Md. Rabby Hossain,
-    Sharmin Jahan Shipra")
+    "🤖 Multi-AI Super App • Developed by Md. Rabby Hossain")
